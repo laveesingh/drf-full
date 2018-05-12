@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from rest_framework import serializers
 from snippets.models import Snippet, LANGUAGE_CHOICES, STYLE_CHOICES
 
@@ -27,6 +28,15 @@ class SnippetSerializer(serializers.Serializer):
         instance.style = validated_data.get('style', instance.style)
         instance.save()
         return instance
+
+
+class UserSerializer(serializers.ModelSerializer):
+    snippets = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Snippet.objects.all())
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'snippets')
 
 
 # Following functions are for illustration purposes only
@@ -67,5 +77,5 @@ def working_with_serializers():
     # restore native types to fully populated object instance
     serializer = SnippetSerializer(data=data)
     serializer.is_valid()  # => True
-    serializer.validated_data # => almost native types
-    serializer.save() # => save instance to db
+    serializer.validated_data  # => almost native types
+    serializer.save()  # => save instance to db
