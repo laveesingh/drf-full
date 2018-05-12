@@ -1,10 +1,12 @@
 from django.http import Http404
+from django.contrib.auth.models import User
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import generics
 from rest_framework import status
 
 from snippets.models import Snippet
-from snippets.serializers import SnippetSerializer
+from snippets.serializers import SnippetSerializer, UserSerializer
 
 
 class SnippetList(APIView):
@@ -47,6 +49,15 @@ class SnippetDetail(APIView):
         snippet = self.get_object(pk)
         snippet.delete()
         return Response(status=HTTP_204_NO_CONTENT)
+
+
+class UserList(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+class UserDetail(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 # Following snippet is function based views which are equivalent to
 # the class based views above
